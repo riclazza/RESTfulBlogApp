@@ -1,0 +1,28 @@
+<% include ../partials/header %>
+
+<div class="jumbotron">
+    <div class="col-md-10 col-lg-8 mx-auto">
+        <h1 class="display-4">Hello,this is a simple blog</h1>
+        <p class="lead">Made with Express - Nodejs - Mongodb - Bootstrap4</p>
+        <a class="btn btn-primary btn-lg" href="/posts/new" role="button">Add a new Post</a>
+    </div>    
+</div>
+
+
+<% posts.forEach(function(post){ %>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto border-bottom mb-5">
+                <h2 class="post-title"><%= post.title %></h2>
+                <p><em>Posted by <%= post.author.username %> </em></p>
+                <img class="img-fluid" src="<%= post.image %>">
+                <p><%= post.body.substring(0, 100) %>...</p>
+                <p><span><%= post.created %></span></p>
+                <a href="/posts/<%= post._id%>">Read More</a>
+            </div>
+        </div>
+    </div>
+    
+<% }) %>
+
+<% include ../partials/footer %>

@@ -1,0 +1,25 @@
+<% include ./partials/header %>
+
+<div class="mt-5 border mx-auto col-md-10 col-lg-8 mx-auto">
+    <div class="col-md-12 text-center">
+        <h1>Register Form</h1>
+    </div>    
+    <form action="/register" method="POST">
+        <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <input type="text" class="form-control" id="inputUsername" name="username" placeholder="username">
+        </div>
+        <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" class="form-control" id="inputPassword" name="password" placeholder="password">
+        </div>
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit" > Register as new User </button>      
+    </div>
+    </form> 
+</div>
+
+
+
+<% include ./partials/footer %>
+
