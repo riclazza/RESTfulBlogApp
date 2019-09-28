@@ -19,3 +19,5 @@ package-lock.json
 *.log
 *.gz
 
+# .env config file
+.env

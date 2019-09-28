@@ -16,6 +16,8 @@ var app = express();
 
 var PORT = 8080;
 
+require('dotenv').config();
+
 //This will connecto to the mongo service created by docker-compose 
 //If mongo service is running on the local machine , use localhost:27017 instead of mongo:27017
 mongoose.connect('mongodb://mongo:27017/restful_blog_app', { useNewUrlParser: true});
@@ -30,7 +32,7 @@ app.use(flash());
 //==================PASSPORT============================
 
 app.use(require("express-session")({
-    secret: 'This should be secret!!!',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
