@@ -1,26 +1,40 @@
 <% include ../partials/header %>
 <div class="container-fluid row justify-content-center">
-    <div class="col-md-12 text-center">
-        <h1>Create a new Post</h1>
-    </div>
-    <div class="border mx-auto col-md-10 col-lg-8 mx-auto">
-        <form action="/posts" method="POST">
-             <div class="form-group">
-                <label>Title</label>
-                <input class="form-control" type="text" name="post[title]" placeholder="title" required>
-            </div>
-            <div class="form-group">
-               <label>Image (put your image link)</label>
-               <input class="form-control" type="text" name="post[image]" placeholder="image link">
-            </div>
-            <div class="form-group">
-                
-                <label>Content</label>
-                <textarea class="form-control" name="post[body]" rows="8" required></textarea>
-                   
-            </div>
-             <button class="btn btn-primary" type="submit"> Create a new Post </button>
-        </form>
-    </div> 
+  <div class="col-md-12 text-center">
+    <h1>Create a new Post</h1>
+  </div>
+  <div class="border mx-auto col-md-10 col-lg-8 mx-auto">
+    <form action="/posts" method="POST">
+      <div class="form-group">
+        <label>Title</label>
+        <input
+          class="form-control"
+          type="text"
+          name="post[title]"
+          placeholder="title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label>Image (put your image link)</label>
+        <input
+          class="form-control"
+          type="text"
+          name="post[image]"
+          placeholder="image link"
+        />
+      </div>
+      <div class="form-group">
+        <label>Content</label>
+        <textarea
+          class="form-control"
+          name="post[body]"
+          rows="8"
+          required
+        ></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Create a new Post</button>
+    </form>
+  </div>
 </div>
 <% include ../partials/footer %>

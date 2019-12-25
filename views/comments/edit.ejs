@@ -1,24 +1,23 @@
-
 <% include ../partials/header %>
 
 <div class="mt-5 container-fluid row justify-content-center">
-    <div class="col-md-12 text-center">
-        <h1>Edit comment</h1>
-        <p>
-        Author : <strong> <%= comment.author.username %> </strong>
-        </p>
-    </div>
-    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-        <form action="/posts/<%= post._id %>/comments" method="POST">
-            <div class="form-group">
-                <label>Comment</label>
-                <textarea class="form-control" name="comment[text]" rows="8" required> <%= comment.text %> </textarea>
-            </div>
-            <div class="text-center">
-                <button class="btn btn-primary" type="submit"> Edit the comment </button>    
-            </div>
-        </form>
-    </div> 
+  <div class="col-md-12 text-center">
+    <h1>Edit comment</h1>
+    <p>Author : <strong> <%= comment.author.username %> </strong></p>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+    <form action="/posts/<%= post._id %>/comments" method="POST">
+      <div class="form-group">
+        <label>Comment</label>
+        <textarea class="form-control" name="comment[text]" rows="8" required>
+            <%= comment.text %>
+        </textarea>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary" type="submit">Edit the comment</button>
+      </div>
+    </form>
+  </div>
 </div>
-dsasa
+
 <% include ../partials/footer %>

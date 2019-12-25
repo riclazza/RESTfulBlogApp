@@ -1,55 +1,71 @@
 <% include ../partials/header %>
 <div class="container">
-    <div class="row">
-        <div class="col-md-10 col-lg-8 mx-auto mb-5">
-            <h2 class="text-center mt-5"><%= post.title %></h2>
-            <img class="img-fluid" src="<%= post.image %>">
-            <span><%= post.created.toDateString() %></span>
-            <div class="text-break">
-                <p><%= post.body %></p>
-                <p>
-                    <em>Posted by <%= post.author.username %> </em>
-                </p>
-            </div>
-            <% if (currentUser && post.author.id.equals(currentUser._id)) { %>
-            <a class="btn btn-warning" href="/posts/<%=post._id%>/edit">Edit</a>
-            <form class="delete-form" action="/posts/<%=post._id%>?_method=DELETE" method="POST">
-            <button class="btn btn-danger">DELETE</button>
-            </form>      
-            <% } %>
-        </div>    
+  <div class="row">
+    <div class="col-md-10 col-lg-8 mx-auto mb-5">
+      <h2 class="text-center mt-5"><%= post.title %></h2>
+      <img class="img-fluid" src="<%= post.image %>" />
+      <span><%= post.created.toDateString() %></span>
+      <div class="text-break">
+        <p><%= post.body %></p>
+        <p>
+          <em>Posted by <%= post.author.username %> </em>
+        </p>
+      </div>
+      <% if (currentUser && post.author.id.equals(currentUser._id)) { %>
+      <a class="btn btn-warning" href="/posts/<%=post._id%>/edit">Edit</a>
+      <form
+        class="delete-form"
+        action="/posts/<%=post._id%>?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-danger">DELETE</button>
+      </form>
+      <% } %>
     </div>
-    <hr>
-    <div class="text-center">
-        <a class="btn btn-primary" href="/posts/<%= post._id%>/comments/new">ADD COMMENT</a>    
-    </div>
-    
-    <div class="row">
-        <% post.comments.forEach(function(comment){ %>
-        <div class="col-md-12 mt-2">
-            <div class="card">
-                <div class="card-body">
-                    <div class="float-left">
-                        <p class="card-title"> <strong> <%= comment.author.username %> </strong> </p>
-                        <p class="card-text"> <%= comment.text %> </p>
-                    </div>    
-                    <div class="float-right">
-                    <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
-                         <a class="btn btn-sm btn-warning" href="/posts/<%=post._id%>/comments/<%=comment._id%>/edit">
-                           Edit
-                        </a> 
-                        <form class="delete-form" action="/posts/<%=post._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
-                           <button class="btn btn-sm btn-danger"  value="Delete">Delete </button>
-                        </form>    
-                    <%} %>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <hr />
+  <div class="text-center">
+    <a class="btn btn-primary" href="/posts/<%= post._id%>/comments/new"
+      >ADD COMMENT</a
+    >
+  </div>
+
+  <div class="row">
+    <% post.comments.forEach(function(comment){ %>
+    <div class="col-md-12 mt-2">
+      <div class="card">
+        <div class="card-body">
+          <div class="float-left">
+            <p class="card-title">
+              <strong> <%= comment.author.username %> </strong>
+            </p>
+            <p class="card-text"><%= comment.text %></p>
+          </div>
+          <div class="float-right">
+            <% if (currentUser && comment.author.id.equals(currentUser._id)) {
+            %>
+            <a
+              class="btn btn-sm btn-warning"
+              href="/posts/<%=post._id%>/comments/<%=comment._id%>/edit"
+            >
+              Edit
+            </a>
+            <form
+              class="delete-form"
+              action="/posts/<%=post._id%>/comments/<%=comment._id%>?_method=DELETE"
+              method="POST"
+            >
+              <button class="btn btn-sm btn-danger" value="Delete">
+                Delete
+              </button>
+            </form>
+            <%} %>
+          </div>
         </div>
-        <% }) %>
+      </div>
     </div>
-    
-    
+    <% }) %>
+  </div>
 </div>
 
 <% include ../partials/footer %>
