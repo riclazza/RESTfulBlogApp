@@ -1,29 +1,51 @@
-var express = require('express'),
+const express = require('express'),
   bodyParser = require('body-parser'),
   expressSanitizer = require('express-sanitizer'),
-  mongoose = require('mongoose'),
   flash = require('connect-flash'),
   passport = require('passport'),
   LocalStrategy = require('passport-local'),
   User = require('./models/user'),
-  methodOverride = require('method-override');
+  methodOverride = require('method-override'),
+  rateLimit = require('express-rate-limit'),
+  helmet = require('helmet'),
+  mongoSanitize = require('express-mongo-sanitize'),
+  xss = require('xss-clean');
 
-var commentRoutes = require('./routes/comments'),
+const dotenv = require('dotenv');
+
+const commentRoutes = require('./routes/comments'),
   postsRoutes = require('./routes/posts'),
   authRoutes = require('./routes/auth');
 
-var app = express();
+const app = express();
 
-var PORT = 8080;
+dotenv.config({ path: './config.env' });
 
-require('dotenv').config();
+// Global MIDDLEWARES
+//set security http headers
+app.use(helmet());
 
-//This will connecto to the mongo service created by docker-compose
-//If mongo service is running on the local machine , use localhost:27017 instead of mongo:27017
-mongoose.connect('mongodb://mongo:27017/restful_blog_app', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+// Development logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+//Limit requests
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000, //100 requests in 1 hour
+  message: 'Too many requests from this IP, please try again in an hour!'
 });
+app.use('/api', limiter);
+
+//Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+//Data sanitization against XSS
+app.use(xss());
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
@@ -60,6 +82,4 @@ app.use(authRoutes);
 app.use(postsRoutes);
 app.use(commentRoutes);
 
-app.listen(process.env.PORT || PORT, function() {
-  console.log('server is running on port ' + PORT);
-});
+module.exports = app;
