@@ -1,8 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var Post = require('../models/post');
-var Comment = require('../models/comment');
-var middleware = require('../middleware');
+const express = require('express');
+
+const router = express.Router();
+
+const Post = require('../models/post');
+const Comment = require('../models/comment');
+const middleware = require('../middleware');
 
 //comments New
 router.get('/posts/:id/comments/new', middleware.isLoggedIn, function(
@@ -58,19 +60,18 @@ router.get(
       if (err || !foundPost) {
         req.flash('error', 'Post not found');
         return res.redirect('back');
-      } else {
-        //if there is no error , we find the comment and render edit form
-        Comment.findById(req.params.comment_id, function(err, foundComment) {
-          if (err) {
-            res.redirect('back');
-          } else {
-            res.render('comments/edit', {
-              post: foundPost,
-              comment: foundComment
-            });
-          }
-        });
       }
+      //if there is no error , we find the comment and render edit form
+      Comment.findById(req.params.comment_id, function(err, foundComment) {
+        if (err) {
+          res.redirect('back');
+        } else {
+          res.render('comments/edit', {
+            post: foundPost,
+            comment: foundComment
+          });
+        }
+      });
     });
     //res.send('comments/edit');
   }

@@ -1,11 +1,11 @@
-FROM node:10
+FROM node:12-stretch
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm cache clean --force
 # Copy app source code
 COPY . .
 #Expose port and start application
 EXPOSE 8080
-CMD [ "npm", "start" ]
+CMD [ "node", "./server.js" ]

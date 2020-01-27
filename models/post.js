@@ -1,6 +1,7 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+
 mongoose.set('useFindAndModify', false);
-var postSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
   title: String,
   image: String,
   body: String,
@@ -19,6 +20,6 @@ var postSchema = new mongoose.Schema({
     }
   ]
 });
-var Post = mongoose.model('Post', postSchema);
+const Post = mongoose.model('Post', postSchema);
 
 module.exports = Post;

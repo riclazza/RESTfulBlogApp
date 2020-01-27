@@ -1,8 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var Post = require('../models/post');
-var Comment = require('../models/comment');
-var middleware = require('../middleware');
+const express = require('express');
+
+const router = express.Router();
+
+const Post = require('../models/post');
+const Comment = require('../models/comment');
+const middleware = require('../middleware');
 
 //Root route
 router.get('/', function(req, res) {
@@ -83,7 +85,7 @@ router.put('/posts/:id', middleware.checkPostOwnership, function(req, res) {
     if (err) {
       res.redirect('/posts');
     } else {
-      res.redirect('/posts/' + req.params.id);
+      res.redirect(`/posts/${req.params.id}`);
     }
   });
 });

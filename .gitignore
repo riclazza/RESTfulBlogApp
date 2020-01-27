@@ -20,4 +20,4 @@ package-lock.json
 *.gz
 
 # .env config file
-.env
+*.env

@@ -1,21 +1,22 @@
-const express = require('express'),
-  bodyParser = require('body-parser'),
-  expressSanitizer = require('express-sanitizer'),
-  flash = require('connect-flash'),
-  passport = require('passport'),
-  LocalStrategy = require('passport-local'),
-  User = require('./models/user'),
-  methodOverride = require('method-override'),
-  rateLimit = require('express-rate-limit'),
-  helmet = require('helmet'),
-  mongoSanitize = require('express-mongo-sanitize'),
-  xss = require('xss-clean');
+const express = require('express');
+const bodyParser = require('body-parser');
+const expressSanitizer = require('express-sanitizer');
+const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const methodOverride = require('method-override');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const morgan = require('morgan');
 
 const dotenv = require('dotenv');
 
-const commentRoutes = require('./routes/comments'),
-  postsRoutes = require('./routes/posts'),
-  authRoutes = require('./routes/auth');
+const User = require('./models/user');
+const commentRoutes = require('./routes/comments');
+const postsRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -48,7 +49,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 app.set('view engine', 'ejs');
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
 app.use(methodOverride('_method'));
