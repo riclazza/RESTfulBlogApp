@@ -9,7 +9,7 @@ process.on('uncaughtException', err => {
 
 dotenv.config({ path: './config.env' });
 
-//This will connecto to the mongo service created by docker-compose
+//This will connect to the mongo service created by docker-compose
 //If mongo service is running on the local machine , use localhost:27017 instead of mongo:27017
 const DB = process.env.DATABASE_LOCAL;
 

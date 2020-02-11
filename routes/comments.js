@@ -4,15 +4,12 @@ const router = express.Router();
 
 const Post = require('../models/post');
 const Comment = require('../models/comment');
-const middleware = require('../middleware');
+const authController = require('../controllers/authController');
 
 //comments New
-router.get('/posts/:id/comments/new', middleware.isLoggedIn, function(
-  req,
-  res
-) {
+router.get('/posts/:id/comments/new', authController.isLoggedIn, (req, res) => {
   //find post by id
-  Post.findById(req.params.id, function(err, foundPost) {
+  Post.findById(req.params.id, (err, foundPost) => {
     if (err || !foundPost) {
       req.flash('error', 'Post not found');
       res.redirect('/posts');
@@ -23,16 +20,15 @@ router.get('/posts/:id/comments/new', middleware.isLoggedIn, function(
 });
 
 //Comments Create
-router.post('/posts/:id/comments', middleware.isLoggedIn, function(req, res) {
-  Post.findById(req.params.id, function(err, foundPost) {
+router.post('/posts/:id/comments', authController.isLoggedIn, (req, res) => {
+  Post.findById(req.params.id, (err, foundPost) => {
     if (err) {
-      console.log(err);
+      req.flash('error', err.message);
       res.redirect('/posts');
     } else {
-      Comment.create(req.body.comment, function(err, comment) {
-        if (err) {
+      Comment.create(req.body.comment, (error, comment) => {
+        if (error) {
           req.flash('error', 'Error creating comment');
-          console.log(err);
         } else {
           //add id and username to comment
           comment.author.id = req.user._id;
@@ -43,7 +39,7 @@ router.post('/posts/:id/comments', middleware.isLoggedIn, function(req, res) {
           foundPost.comments.push(comment);
           foundPost.save();
           req.flash('success', 'Comment added');
-          res.redirect('/posts/' + foundPost._id);
+          res.redirect(`/posts/${foundPost._id}`);
         }
       });
     }
@@ -53,17 +49,18 @@ router.post('/posts/:id/comments', middleware.isLoggedIn, function(req, res) {
 //Comment EDIT route
 router.get(
   '/posts/:id/comments/:comment_id/edit',
-  middleware.checkCommentOwnership,
-  function(req, res) {
+  authController.isLoggedIn,
+  authController.checkCommentOwnership,
+  (req, res) => {
     //at first we need to find the post
-    Post.findById(req.params.id, function(err, foundPost) {
+    Post.findById(req.params.id, (err, foundPost) => {
       if (err || !foundPost) {
         req.flash('error', 'Post not found');
         return res.redirect('back');
       }
       //if there is no error , we find the comment and render edit form
-      Comment.findById(req.params.comment_id, function(err, foundComment) {
-        if (err) {
+      Comment.findById(req.params.comment_id, (error, foundComment) => {
+        if (error) {
           res.redirect('back');
         } else {
           res.render('comments/edit', {
@@ -80,32 +77,39 @@ router.get(
 //comment UPDATE
 router.put(
   '/posts/:id/comments/:comment_id',
-  middleware.checkCommentOwnership,
-  function(req, res) {
-    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(
-      err,
-      updatedComment
-    ) {
-      if (err) {
-        res.redirect('back');
-      } else {
-        res.redirect('/posts/' + req.params.id);
+  authController.isLoggedIn,
+  authController.checkCommentOwnership,
+  (req, res) => {
+    Comment.findByIdAndUpdate(
+      req.params.comment_id,
+      req.body.comment,
+      (err, updatedComment) => {
+        if (err) {
+          res.redirect('back');
+        } else {
+          req.flash(
+            'success',
+            `Comment updated by ${updatedComment.author.username}`
+          );
+          res.redirect(`/posts/${req.params.id}`);
+        }
       }
-    });
+    );
   }
 );
 
 //Comment DELETE
 router.delete(
   '/posts/:id/comments/:comment_id',
-  middleware.checkCommentOwnership,
-  function(req, res) {
-    Comment.findByIdAndRemove(req.params.comment_id, function(err) {
+  authController.isLoggedIn,
+  authController.checkCommentOwnership,
+  (req, res) => {
+    Comment.findByIdAndRemove(req.params.comment_id, err => {
       if (err) {
         res.redirect('back');
       } else {
         req.flash('success', 'Comment Deleted');
-        res.redirect('/posts/' + req.params.id);
+        res.redirect(`/posts/${req.params.id}`);
       }
     });
   }

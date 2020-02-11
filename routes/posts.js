@@ -4,7 +4,7 @@ const router = express.Router();
 
 const Post = require('../models/post');
 const Comment = require('../models/comment');
-const middleware = require('../middleware');
+const authController = require('../controllers/authController');
 
 //Root route
 router.get('/', function(req, res) {
@@ -12,11 +12,11 @@ router.get('/', function(req, res) {
 });
 
 //INDEX route
-router.get('/posts', function(req, res) {
+router.get('/posts', (req, res) => {
   //find every post in database
-  Post.find({}, function(err, allPosts) {
+  Post.find({}, (err, allPosts) => {
     if (err) {
-      console.log('ERROR');
+      req.flash('error', 'Posts are not found');
     } else {
       res.render('posts/index', { posts: allPosts });
     }
@@ -24,12 +24,12 @@ router.get('/posts', function(req, res) {
 });
 
 //NEW route
-router.get('/posts/new', middleware.isLoggedIn, function(req, res) {
+router.get('/posts/new', authController.isLoggedIn, (req, res) => {
   res.render('posts/new');
 });
 
 //CREATE route
-router.post('/posts', middleware.isLoggedIn, function(req, res) {
+router.post('/posts', authController.isLoggedIn, (req, res) => {
   //sanitize the input
   req.body.post.body = req.sanitize(req.body.post.body);
   //take the author and put it in the Post
@@ -38,7 +38,7 @@ router.post('/posts', middleware.isLoggedIn, function(req, res) {
     username: req.user.username
   };
   //create Post
-  Post.create(req.body.post, function(err, newPost) {
+  Post.create(req.body.post, err => {
     if (err) {
       res.render('posts/new');
     } else {
@@ -49,12 +49,12 @@ router.post('/posts', middleware.isLoggedIn, function(req, res) {
 });
 
 //SHOW route
-router.get('/posts/:id', function(req, res) {
+router.get('/posts/:id', (req, res) => {
   Post.findById(req.params.id)
     .populate('comments')
     .exec(function(err, foundPost) {
       if (err || !foundPost) {
-        //check also if foundPost is null. !null is true
+        //check also if foundPost is null
         req.flash('error', 'Post not found');
         res.redirect('/posts');
       } else {
@@ -64,47 +64,55 @@ router.get('/posts/:id', function(req, res) {
 });
 
 //EDIT route
-router.get('/posts/:id/edit', middleware.checkPostOwnership, function(
-  req,
-  res
-) {
-  //checking if user is logged
-  Post.findById(req.params.id, function(err, foundPost) {
-    res.render('posts/edit', { post: foundPost });
-  });
-});
+router.get(
+  '/posts/:id/edit',
+  authController.isLoggedIn,
+  authController.checkPostOwnership,
+  function(req, res) {
+    Post.findById(req.params.id, (err, foundPost) => {
+      res.render('posts/edit', { post: foundPost });
+    });
+  }
+);
 
 //UPDATE route
-router.put('/posts/:id', middleware.checkPostOwnership, function(req, res) {
-  req.body.post.body = req.sanitize(req.body.post.body);
-
-  Post.findByIdAndUpdate(req.params.id, req.body.post, function(
-    err,
-    updatedPost
-  ) {
-    if (err) {
-      res.redirect('/posts');
-    } else {
-      res.redirect(`/posts/${req.params.id}`);
-    }
-  });
-});
-
-//DELETE route
-router.delete('/posts/:id', middleware.checkPostOwnership, function(req, res) {
-  //destroy Post and redirect
-  Post.findByIdAndRemove(req.params.id, function(err, removedPost) {
-    if (err) {
-      console.log(err);
-    }
-    //delete all the comments related to the post that we are removing
-    Comment.deleteMany({ _id: { $in: removedPost.comments } }, function(err) {
+router.put(
+  '/posts/:id',
+  authController.isLoggedIn,
+  authController.checkPostOwnership,
+  function(req, res) {
+    req.body.post.body = req.sanitize(req.body.post.body);
+    Post.findByIdAndUpdate(req.params.id, req.body.post, (err, updatedPost) => {
       if (err) {
-        console.log(err);
+        res.redirect('/posts');
+      } else {
+        res.redirect(`/posts/${updatedPost._id}`);
       }
     });
-    res.redirect('/posts');
-  });
-});
+  }
+);
+
+//DELETE route
+router.delete(
+  '/posts/:id',
+  authController.isLoggedIn,
+  authController.checkPostOwnership,
+  function(req, res) {
+    //destroy Post and redirect
+    Post.findByIdAndRemove(req.params.id, (err, removedPost) => {
+      if (err) {
+        req.flash('error', err.message);
+        res.redirect('/posts');
+      }
+      //delete all the comments related to the post that we are removing
+      Comment.deleteMany({ _id: { $in: removedPost.comments } }, error => {
+        if (error) {
+          req.flash('error', err.message);
+        }
+      });
+      res.redirect('/posts');
+    });
+  }
+);
 
 module.exports = router;
