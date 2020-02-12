@@ -1,10 +1,11 @@
-version: '3'
+version: "3"
 
 services:
   web:
     build: .
     ports:
-      - '8080:8080'
+      - "8080:8080"
+    restart: always
     depends_on:
       - mongo
   mongo:
@@ -12,6 +13,6 @@ services:
     volumes:
       - db_data:/data/db
     ports:
-      - '27017:27017'
+      - "27017:27017"
 volumes:
   db_data:

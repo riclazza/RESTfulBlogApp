@@ -21,3 +21,7 @@ package-lock.json
 
 # .env config file
 *.env
+
+#images
+*.png
+*.jpeg
